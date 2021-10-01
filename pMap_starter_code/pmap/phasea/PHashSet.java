@@ -3,11 +3,8 @@
  * Phase B <snb2593><sg52879>
  */
 
-package pmap.phasea;
-
-import java.util.*;
-import java.io.*;
-import java.lang.*;
+import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * PMap stands for Paired Map. A map is a collection of key-value
@@ -18,11 +15,11 @@ import java.lang.*;
  * to work.
  */
 public class PMap {
-    private ArrayList<PEntry> mapUtil;
+    private HashSet<PEntry>data;
 
     public PMap()
     {
-        this.mapUtil = new ArrayList<PEntry>();
+        this.data = new HashSet<>();
     }
 
     /**
@@ -32,12 +29,7 @@ public class PMap {
      */
     public Integer size() {
         // TODO
-        return mapUtil.size();
-    }
-
-    public ArrayList<PEntry> getList()
-    {
-        return mapUtil;
+        return data.size();
     }
 
     /**
@@ -49,7 +41,7 @@ public class PMap {
      */
     public boolean isEmpty() {
         // TODO
-        return (size() == 0);
+        return (size()==0);
     }
 
     /**
@@ -62,11 +54,10 @@ public class PMap {
      */
     public boolean containsKey(Integer key) {
         // TODO
-        Iterator<PEntry> iter = mapUtil.iterator();
-        while(iter.hasNext())
-        {
-            PEntry hold = (PEntry) iter.next();
-            if(hold.getKey() == key) {return true;}
+        for (PEntry dat : data) {
+            if (dat.getKey().equals(key)) {
+                return true;
+            }
         }
         return false;
     }
@@ -81,11 +72,10 @@ public class PMap {
      */
     public boolean containsValue(Integer value) {
         // TODO
-        Iterator<PEntry> iter = mapUtil.iterator();
-        while(iter.hasNext())
-        {
-            PEntry hold = (PEntry) iter.next();
-            if(hold.getValue() == value) {return true;}
+        for(PEntry dat:data){
+            if(dat.getValue().equals(value)){
+                return true;
+            }
         }
         return false;
     }
@@ -99,14 +89,12 @@ public class PMap {
      *         {@code null} if this map contains no mapping for the
      *         key
      */
-    public Integer get(Integer key) 
+    public Integer get(Integer key)
     {
-        // TODO
-        Iterator<PEntry> iter = mapUtil.iterator();
-        while(iter.hasNext())
-        {
-            PEntry hold = (PEntry) iter.next();
-            if(hold.getKey() == key) {return hold.getValue();}
+        for(PEntry dat: data){
+            if(dat.getKey().equals(key)){
+                return dat.getValue();
+            }
         }
         return null;
     }
@@ -125,19 +113,19 @@ public class PMap {
      */
     public Integer put(Integer key, Integer value) {
         // TODO
-        Iterator<PEntry> iter = mapUtil.iterator();
-        while(iter.hasNext())
-        {
-            PEntry hold = (PEntry) iter.next();
-            if(hold.getKey() == key) 
-            {
-                Integer get = hold.getValue(); 
-                hold.setValue(value); 
-                return get;
+        Iterator<PEntry> iter = data.iterator();
+        if(!containsKey(key)){
+            data.add(new PEntry(key,value));
+            return null;
+        }
+        while(iter.hasNext()){
+            PEntry cur = iter.next();
+            if(cur.getKey().equals(key)){
+                Integer hold = cur.getKey();
+                cur.setValue(value);
+                return hold;
             }
         }
-        PEntry other = new PEntry(key, value);
-        mapUtil.add(other);
         return null;
     }
 
@@ -158,15 +146,14 @@ public class PMap {
      */
     public Integer remove(Integer key) {
         // TODO
-        Iterator<PEntry> iter = mapUtil.iterator();
-        while(iter.hasNext())
-        {
-            PEntry hold = (PEntry) iter.next();
-            if(hold.getKey() == key) 
-            {
-                Integer val = hold.getValue();
-                mapUtil.remove(hold);
-                return val;
+        if(!containsKey(key)){return null;}
+        Iterator <PEntry> iter = data.iterator();
+        while(iter.hasNext()){
+            PEntry cur = iter.next();
+            if(cur.getKey().equals(key)){
+                Integer hold = cur.getValue();
+                data.remove(cur);
+                return hold;
             }
         }
         return null;
@@ -180,14 +167,10 @@ public class PMap {
      * @param keys the array of keys to be stored in this map
      * @param values the array of values to be stored in this map
      */
-    public void putAll(Integer[] keys, Integer[] values) 
+    public void putAll(Integer[] keys, Integer[] values)
     {
-        if(keys.length != values.length) {throw new IllegalArgumentException("Keys array and Values array must have equal lengths.");}
-        for(int i = 0; i < keys.length; i++)
-        {
-            PEntry toAdd = new PEntry(keys[i], values[i]);
-            mapUtil.add(toAdd);
-        }
+        if(keys.length!=values.length){throw new IllegalArgumentException("Keys and Values array must have same length");}
+
     }
 
     /**
@@ -196,7 +179,7 @@ public class PMap {
      */
     public void clear() {
         // TODO
-        mapUtil.clear();
+
     }
 
     /**
@@ -206,19 +189,8 @@ public class PMap {
      */
     public Integer[] keySet() {
         // TODO
-        Integer[] allKeys = new Integer[size()];
-        Integer index = 0;
-        Iterator iter = mapUtil.iterator();
-        while(iter.hasNext())
-        {
-            PEntry hold = (PEntry) iter.next(); 
-            allKeys[index] = hold.getKey();
-            System.out.println(allKeys[index]);
-            index++;
-        }
-        return allKeys;
-    }
 
+    }
     /**
      * Returns an array of the values contained in this map.
      *
@@ -226,16 +198,7 @@ public class PMap {
      */
     public Integer[] values() {
         // TODO
-        Integer[] allValues = new Integer[size()];
-        Integer index = 0;
-        Iterator iter = mapUtil.iterator();
-        while(iter.hasNext())
-        {
-            PEntry hold = (PEntry) iter.next(); 
-            allValues[index] = hold.getValue();
-            index++;
-        }
-        return allValues;
+
     }
 
     /**
@@ -245,14 +208,4 @@ public class PMap {
      */
     public PEntry[] entrySet() {
         // TODO
-        PEntry[] allMappings = new PEntry[size()];
-        Integer index = 0;
-        Iterator iter = mapUtil.iterator();
-        while(iter.hasNext())
-        {
-            allMappings[index] = (PEntry) iter.next();
-            index++;
-        }
-        return allMappings;
     }
-}
